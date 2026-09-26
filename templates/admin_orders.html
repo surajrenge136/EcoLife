@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EcoLife - Manage Orders</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .orders-section {
+            min-height: 650px;
+            padding: 50px 8%;
+            background: #f5f8f2;
+        }
+
+        .orders-header {
+            margin-bottom: 30px;
+        }
+
+        .orders-header h1 {
+            color: #183c2b;
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .orders-header p {
+            color: #68756c;
+        }
+
+        .orders-box {
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+            overflow-x: auto;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: 15px;
+            background: #eef4ed;
+            color: #183c2b;
+        }
+
+        .orders-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .order-id {
+            color: #2f7d4a;
+            font-weight: bold;
+        }
+
+        .payment {
+            background: #eef4ed;
+            color: #183c2b;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .amount {
+            font-weight: bold;
+            color: #183c2b;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 50px;
+            color: #68756c;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #2f7d4a;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌱 EcoLife Admin
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/admin">
+            ⚙️ Dashboard
+        </a>
+
+        <a href="/admin/products">
+            🛍️ Products
+        </a>
+
+        <a href="/admin/orders">
+            📦 Orders
+        </a>
+
+        <a href="/admin/users">
+            👥 Users
+        </a>
+
+        <a href="/">
+            🌐 Website
+        </a>
+
+        <a href="/admin/logout">
+            🚪 Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+<section class="orders-section">
+
+    <div class="orders-header">
+
+        <h1>
+            📦 Manage Orders
+        </h1>
+
+        <p>
+            View all customer orders and order information.
+        </p>
+
+    </div>
+
+
+    <div class="orders-box">
+
+        {% if orders %}
+
+        <table class="orders-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Order ID</th>
+
+                    <th>Customer</th>
+
+                    <th>Email</th>
+
+                    <th>Phone</th>
+
+                    <th>Payment</th>
+
+                    <th>Total</th>
+
+                    <th>Date</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for order in orders %}
+
+                <tr>
+
+                    <td class="order-id">
+                        {{ order["order_id"] }}
+                    </td>
+
+                    <td>
+                        {{ order["customer_name"] }}
+                    </td>
+
+                    <td>
+                        {{ order["email"] }}
+                    </td>
+
+                    <td>
+                        {{ order["phone"] }}
+                    </td>
+
+                    <td>
+
+                        <span class="payment">
+                            {{ order["payment"] }}
+                        </span>
+
+                    </td>
+
+                    <td class="amount">
+                        ₹{{ order["total"] }}
+                    </td>
+
+                    <td>
+                        {{ order["order_date"] }}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="no-orders">
+
+            <h2>
+                📦 No Orders Yet
+            </h2>
+
+            <p>
+                Customer orders will appear here.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <a href="/admin"
+       class="back-btn">
+
+        ← Back to Dashboard
+
+    </a>
+
+</section>
+
+
+<footer>
+
+    <p>
+        © 2026 EcoLife. Admin Panel.
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>

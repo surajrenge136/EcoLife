@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EcoLife - Manage Users</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .users-section {
+            min-height: 650px;
+            padding: 50px 8%;
+            background: #f5f8f2;
+        }
+
+        .users-header {
+            margin-bottom: 30px;
+        }
+
+        .users-header h1 {
+            color: #183c2b;
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .users-header p {
+            color: #68756c;
+        }
+
+        .users-box {
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+            overflow-x: auto;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 650px;
+        }
+
+        .users-table th {
+            text-align: left;
+            padding: 15px;
+            background: #eef4ed;
+            color: #183c2b;
+        }
+
+        .users-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        .user-id {
+            color: #2f7d4a;
+            font-weight: bold;
+        }
+
+        .role {
+            background: #eef4ed;
+            color: #183c2b;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .no-users {
+            text-align: center;
+            padding: 50px;
+            color: #68756c;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #2f7d4a;
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<nav class="navbar">
+
+    <div class="logo">
+        🌱 EcoLife Admin
+    </div>
+
+    <div class="nav-links">
+
+        <a href="/admin">
+            ⚙️ Dashboard
+        </a>
+
+        <a href="/admin/products">
+            🛍️ Products
+        </a>
+
+        <a href="/admin/orders">
+            📦 Orders
+        </a>
+
+        <a href="/admin/users">
+            👥 Users
+        </a>
+
+        <a href="/">
+            🌐 Website
+        </a>
+
+        <a href="/admin/logout">
+            🚪 Logout
+        </a>
+
+    </div>
+
+</nav>
+
+
+<section class="users-section">
+
+    <div class="users-header">
+
+        <h1>
+            👥 Manage Users
+        </h1>
+
+        <p>
+            View registered EcoLife customers.
+        </p>
+
+    </div>
+
+
+    <div class="users-box">
+
+        {% if users %}
+
+        <table class="users-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Name</th>
+
+                    <th>Email</th>
+
+                    <th>Role</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+                {% for user in users %}
+
+                <tr>
+
+                    <td class="user-id">
+                        {{ user["id"] }}
+                    </td>
+
+                    <td>
+                        {{ user["name"] }}
+                    </td>
+
+                    <td>
+                        {{ user["email"] }}
+                    </td>
+
+                    <td>
+
+                        <span class="role">
+                            {{ user["role"] }}
+                        </span>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+        {% else %}
+
+        <div class="no-users">
+
+            <h2>
+                👥 No Users Yet
+            </h2>
+
+            <p>
+                Registered customers will appear here.
+            </p>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <a href="/admin"
+       class="back-btn">
+
+        ← Back to Dashboard
+
+    </a>
+
+</section>
+
+
+<footer>
+
+    <p>
+        © 2026 EcoLife. Admin Panel.
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EcoLife - Login</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <!-- Navbar -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🌱 EcoLife
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/products">
+                Products
+            </a>
+
+            <a href="/cart">
+                🛒 Cart
+            </a>
+
+            <a href="/my-orders">
+                📦 My Orders
+            </a>
+
+            <a href="#">
+                About
+            </a>
+
+            <a href="/register">
+                Register
+            </a>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- Login Section -->
+
+    <section class="auth-section">
+
+        <div class="auth-card">
+
+
+            <div class="auth-icon">
+                🌱
+            </div>
+
+
+            <h1>
+                Welcome Back
+            </h1>
+
+
+            <p class="auth-subtitle">
+                Login to continue your EcoLife journey.
+            </p>
+
+
+            {% if error %}
+
+            <div class="auth-error">
+                {{ error }}
+            </div>
+
+            {% endif %}
+
+
+            <form action="/login"
+                  method="POST">
+
+
+                <label>
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                >
+
+
+                <label>
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                >
+
+
+                <button
+                    type="submit"
+                    class="auth-btn"
+                >
+
+                    🔐 Login
+
+                </button>
+
+
+            </form>
+
+
+            <p class="auth-footer">
+
+                Don't have an account?
+
+                <a href="/register">
+                    Create Account
+                </a>
+
+            </p>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <p>
+            © 2026 EcoLife. Live Green. Live Better.
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>

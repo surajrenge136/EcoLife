@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EcoLife - Admin Dashboard</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .admin-section {
+            min-height: 650px;
+            padding: 50px 8%;
+            background: #f5f8f2;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            gap: 20px;
+        }
+
+        .admin-header h1 {
+            color: #183c2b;
+            font-size: 38px;
+            margin-bottom: 8px;
+        }
+
+        .admin-header p {
+            color: #68756c;
+        }
+
+        .admin-logout {
+            padding: 12px 20px;
+            background: #c94c4c;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .admin-logout:hover {
+            background: #a93d3d;
+        }
+
+        .admin-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .admin-card {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+        }
+
+        .admin-card-icon {
+            font-size: 38px;
+            margin-bottom: 15px;
+        }
+
+        .admin-card h3 {
+            color: #68756c;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .admin-card .number {
+            color: #183c2b;
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .admin-actions {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        .admin-action {
+            background: white;
+            padding: 30px;
+            border-radius: 18px;
+            text-decoration: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+            transition: 0.2s;
+        }
+
+        .admin-action:hover {
+            transform: translateY(-5px);
+        }
+
+        .admin-action-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .admin-action h3 {
+            color: #183c2b;
+            margin-bottom: 8px;
+        }
+
+        .admin-action p {
+            color: #68756c;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 800px) {
+
+            .admin-cards,
+            .admin-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🌱 EcoLife Admin
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/">
+                🌐 Website
+            </a>
+
+            <a href="/products">
+                Products
+            </a>
+
+            <a href="/admin">
+                ⚙️ Dashboard
+            </a>
+
+            <a href="/admin/products">
+                🛍️ Products
+            </a>
+
+            <a href="/admin/orders">
+                📦 Orders
+            </a>
+
+            <a href="/admin/users">
+                👥 Users
+            </a>
+
+            <a href="/admin/logout">
+                🚪 Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ADMIN SECTION -->
+
+    <section class="admin-section">
+
+
+        <!-- HEADER -->
+
+        <div class="admin-header">
+
+            <div>
+
+                <h1>
+                    Admin Dashboard 👋
+                </h1>
+
+                <p>
+                    Manage your EcoLife store from one place.
+                </p>
+
+            </div>
+
+
+            <a href="/admin/logout"
+               class="admin-logout">
+
+                🚪 Admin Logout
+
+            </a>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="admin-cards">
+
+
+            <!-- USERS -->
+
+            <div class="admin-card">
+
+                <div class="admin-card-icon">
+                    👥
+                </div>
+
+                <h3>
+                    Total Users
+                </h3>
+
+                <div class="number">
+                    {{ total_users }}
+                </div>
+
+            </div>
+
+
+            <!-- ORDERS -->
+
+            <div class="admin-card">
+
+                <div class="admin-card-icon">
+                    📦
+                </div>
+
+                <h3>
+                    Total Orders
+                </h3>
+
+                <div class="number">
+                    {{ total_orders }}
+                </div>
+
+            </div>
+
+
+            <!-- SALES -->
+
+            <div class="admin-card">
+
+                <div class="admin-card-icon">
+                    💰
+                </div>
+
+                <h3>
+                    Total Sales
+                </h3>
+
+                <div class="number">
+                    ₹{{ total_sales }}
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- ADMIN ACTIONS -->
+
+        <div class="admin-actions">
+
+
+            <!-- MANAGE PRODUCTS -->
+
+            <a href="/admin/products"
+               class="admin-action">
+
+                <div class="admin-action-icon">
+                    🛍️
+                </div>
+
+                <h3>
+                    Manage Products
+                </h3>
+
+                <p>
+                    Add, edit and remove EcoLife products.
+                </p>
+
+            </a>
+
+
+            <!-- MANAGE ORDERS -->
+
+            <a href="/admin/orders"
+               class="admin-action">
+
+                <div class="admin-action-icon">
+                    📦
+                </div>
+
+                <h3>
+                    Manage Orders
+                </h3>
+
+                <p>
+                    View customer orders and order information.
+                </p>
+
+            </a>
+
+
+            <!-- MANAGE USERS -->
+
+            <a href="/admin/users"
+               class="admin-action">
+
+                <div class="admin-action-icon">
+                    👥
+                </div>
+
+                <h3>
+                    Manage Users
+                </h3>
+
+                <p>
+                    View registered EcoLife customers.
+                </p>
+
+            </a>
+
+
+        </div>
+
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <p>
+            © 2026 EcoLife. Admin Panel.
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>

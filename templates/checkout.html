@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EcoLife - Checkout</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <!-- Navbar -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🌱 EcoLife
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/products">
+                Products
+            </a>
+
+            <a href="/cart">
+                🛒 Cart
+            </a>
+
+            <a href="/my-orders">
+                📦 My Orders
+            </a>
+
+            <a href="#">
+                About
+            </a>
+
+
+            {% if session.get("user_id") %}
+
+                <a href="#">
+                    👤 Hi, {{ session.get("user_name") }}
+                </a>
+
+                <a href="/logout">
+                    🚪 Logout
+                </a>
+
+            {% else %}
+
+                <a href="/login">
+                    🔐 Login
+                </a>
+
+                <a href="/register">
+                    Register
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- Checkout -->
+
+    <section class="checkout-section">
+
+
+        <h1 style="
+            text-align: center;
+            font-size: 42px;
+            color: #183c2b;
+            margin-bottom: 40px;
+        ">
+
+            🛍️ Checkout
+
+        </h1>
+
+
+        <div class="checkout-container">
+
+
+            <!-- Customer Details -->
+
+            <div class="checkout-card">
+
+
+                <h2>
+                    📦 Delivery Details
+                </h2>
+
+
+                <form
+                    action="/place-order"
+                    method="POST"
+                >
+
+
+                    <!-- Name -->
+
+                    <label>
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="Enter your full name"
+                        value="{{ session.get('user_name', '') }}"
+                        required
+                    >
+
+
+                    <!-- Email -->
+
+                    <label>
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="Enter your email"
+                        value="{{ session.get('user_email', '') }}"
+                        required
+                    >
+
+
+                    <!-- Phone -->
+
+                    <label>
+                        Phone Number
+                    </label>
+
+                    <input
+                        type="tel"
+                        name="phone"
+                        placeholder="Enter your phone number"
+                        pattern="[0-9]{10}"
+                        maxlength="10"
+                        required
+                    >
+
+
+                    <!-- Address -->
+
+                    <label>
+                        Delivery Address
+                    </label>
+
+                    <textarea
+                        name="address"
+                        rows="4"
+                        placeholder="House No., Street, Area..."
+                        required
+                    ></textarea>
+
+
+                    <!-- City + State -->
+
+                    <div class="checkout-row">
+
+
+                        <div>
+
+                            <label>
+                                City
+                            </label>
+
+                            <input
+                                type="text"
+                                name="city"
+                                placeholder="Enter city"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div>
+
+                            <label>
+                                State
+                            </label>
+
+                            <input
+                                type="text"
+                                name="state"
+                                placeholder="Enter state"
+                                required
+                            >
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- Pincode -->
+
+                    <label>
+                        Pincode
+                    </label>
+
+                    <input
+                        type="text"
+                        name="pincode"
+                        placeholder="Enter 6-digit pincode"
+                        pattern="[0-9]{6}"
+                        maxlength="6"
+                        required
+                    >
+
+
+                    <!-- Payment -->
+
+                    <h2 class="payment-title">
+                        💳 Payment Method
+                    </h2>
+
+
+                    <div class="payment-option">
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="payment"
+                                value="Cash on Delivery"
+                                checked
+                            >
+
+                            💵 Cash on Delivery
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="payment"
+                                value="UPI"
+                            >
+
+                            📱 UPI
+
+                        </label>
+
+
+                        <label>
+
+                            <input
+                                type="radio"
+                                name="payment"
+                                value="Card"
+                            >
+
+                            💳 Card
+
+                        </label>
+
+
+                    </div>
+
+
+                    <!-- Place Order -->
+
+                    <button
+                        type="submit"
+                        class="place-order-btn"
+                    >
+
+                        🔒 Place Order • ₹{{ total }}
+
+                    </button>
+
+
+                </form>
+
+
+            </div>
+
+
+
+            <!-- Order Summary -->
+
+            <div class="checkout-card order-summary">
+
+
+                <h2>
+                    🧾 Order Summary
+                </h2>
+
+
+                <div class="summary-item">
+
+                    <span>
+                        Products
+                    </span>
+
+                    <span>
+                        Cart items
+                    </span>
+
+                </div>
+
+
+                <div class="summary-item">
+
+                    <span>
+                        Delivery
+                    </span>
+
+                    <span>
+                        Free
+                    </span>
+
+                </div>
+
+
+                <hr>
+
+
+                <div class="summary-total">
+
+                    <span>
+                        Total
+                    </span>
+
+                    <strong>
+                        ₹{{ total }}
+                    </strong>
+
+                </div>
+
+
+                <div style="
+                    padding: 18px;
+                    background: #e5f3df;
+                    border-radius: 12px;
+                    margin-bottom: 20px;
+                ">
+
+                    <strong style="
+                        color: #183c2b;
+                    ">
+
+                        🌱 EcoLife Promise
+
+                    </strong>
+
+
+                    <p style="
+                        margin-top: 8px;
+                        color: #68756c;
+                        line-height: 1.5;
+                        font-size: 14px;
+                    ">
+
+                        Your order supports sustainable
+                        and eco-friendly living.
+
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="/cart"
+                    class="back-cart-btn"
+                >
+
+                    ← Back to Cart
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <p>
+
+            © 2026 EcoLife. Live Green. Live Better.
+
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>

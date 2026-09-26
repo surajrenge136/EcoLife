@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>
+        EcoLife - {% if product %}Edit Product{% else %}Add Product{% endif %}
+    </title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .admin-form-section {
+            min-height: 650px;
+            padding: 50px 8%;
+            background: #f5f8f2;
+        }
+
+        .admin-form-box {
+            max-width: 750px;
+            margin: auto;
+            background: white;
+            padding: 35px;
+            border-radius: 18px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+        }
+
+        .admin-form-box h1 {
+            color: #183c2b;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 7px;
+            color: #183c2b;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #d8ded9;
+            border-radius: 8px;
+            font-size: 15px;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            background: #2f7d4a;
+            color: white;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .save-btn:hover {
+            background: #24643a;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 15px;
+            color: #2f7d4a;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🌱 EcoLife Admin
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/admin">
+                ⚙️ Dashboard
+            </a>
+
+            <a href="/admin/products">
+                🛍️ Products
+            </a>
+
+            <a href="/admin/logout">
+                🚪 Logout
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <section class="admin-form-section">
+
+        <div class="admin-form-box">
+
+            <h1>
+
+                {% if product %}
+                    ✏️ Edit Product
+                {% else %}
+                    ➕ Add New Product
+                {% endif %}
+
+            </h1>
+
+
+            <form method="POST">
+
+
+                <div class="form-group">
+
+                    <label>
+                        Product Name
+                    </label>
+
+                    <input
+                        type="text"
+                        name="name"
+                        value="{{ product['name'] if product else '' }}"
+                        placeholder="Enter product name"
+                        required>
+
+                </div>
+
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Price (₹)
+                        </label>
+
+                        <input
+                            type="number"
+                            name="price"
+                            value="{{ product['price'] if product else '' }}"
+                            placeholder="299"
+                            min="0"
+                            required>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Stock
+                        </label>
+
+                        <input
+                            type="number"
+                            name="stock"
+                            value="{{ product['stock'] if product else '0' }}"
+                            placeholder="50"
+                            min="0"
+                            required>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Image Filename
+                    </label>
+
+                    <input
+                        type="text"
+                        name="image"
+                        value="{{ product['image'] if product else '' }}"
+                        placeholder="bottle.jpg">
+
+                    <small>
+                        Put the image inside:
+                        static/images/
+                    </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Description
+                    </label>
+
+                    <textarea
+                        name="description"
+                        placeholder="Enter product description">{{ product['description'] if product else '' }}</textarea>
+
+                </div>
+
+
+                <div class="form-row">
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Rating
+                        </label>
+
+                        <input
+                            type="number"
+                            name="rating"
+                            value="{{ product['rating'] if product else '0' }}"
+                            min="0"
+                            max="5"
+                            step="0.1">
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>
+                            Number of Reviews
+                        </label>
+
+                        <input
+                            type="number"
+                            name="reviews"
+                            value="{{ product['reviews'] if product else '0' }}"
+                            min="0">
+
+                    </div>
+
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="save-btn">
+
+                    {% if product %}
+                        💾 Update Product
+                    {% else %}
+                        ➕ Add Product
+                    {% endif %}
+
+                </button>
+
+
+            </form>
+
+
+            <a href="/admin/products"
+               class="back-btn">
+
+                ← Back to Products
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <footer>
+
+        <p>
+            © 2026 EcoLife. Admin Panel.
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>

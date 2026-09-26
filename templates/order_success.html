@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EcoLife - Order Successful</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        /* Success Page */
+
+        .success-section {
+            min-height: 650px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 60px 20px;
+
+            background: #f5f8f2;
+        }
+
+
+        .success-card {
+            width: 100%;
+            max-width: 650px;
+
+            background: white;
+
+            padding: 45px;
+
+            border-radius: 24px;
+
+            text-align: center;
+
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+        }
+
+
+        .success-icon {
+            width: 85px;
+            height: 85px;
+
+            margin: 0 auto 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background: #e5f3df;
+
+            border-radius: 50%;
+
+            font-size: 45px;
+        }
+
+
+        .success-card h1 {
+            color: #183c2b;
+
+            font-size: 38px;
+
+            margin-bottom: 12px;
+        }
+
+
+        .success-message {
+            color: #68756c;
+
+            font-size: 17px;
+
+            line-height: 1.6;
+
+            margin-bottom: 30px;
+        }
+
+
+        .order-box {
+            background: #f5f8f2;
+
+            border-radius: 16px;
+
+            padding: 25px;
+
+            margin-bottom: 30px;
+
+            text-align: left;
+        }
+
+
+        .order-row {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 14px 0;
+
+            border-bottom: 1px solid #dfe7e0;
+        }
+
+
+        .order-row:last-child {
+            border-bottom: none;
+        }
+
+
+        .order-label {
+            color: #68756c;
+
+            font-size: 15px;
+        }
+
+
+        .order-value {
+            color: #183c2b;
+
+            font-weight: bold;
+
+            font-size: 16px;
+        }
+
+
+        .order-total {
+            color: #347b4b;
+
+            font-size: 22px;
+        }
+
+
+        .success-note {
+            padding: 16px;
+
+            margin-bottom: 30px;
+
+            background: #e5f3df;
+
+            border-radius: 12px;
+
+            color: #285f3a;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+
+        .success-actions {
+            display: flex;
+
+            justify-content: center;
+
+            gap: 15px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .success-btn {
+            display: inline-block;
+
+            padding: 13px 22px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-weight: bold;
+
+            transition: 0.2s;
+        }
+
+
+        .shopping-btn {
+            background: #347b4b;
+
+            color: white;
+        }
+
+
+        .shopping-btn:hover {
+            background: #28633b;
+        }
+
+
+        .home-btn {
+            background: #e5f3df;
+
+            color: #347b4b;
+        }
+
+
+        .home-btn:hover {
+            background: #d6ecd0;
+        }
+
+
+        /* Mobile */
+
+        @media (max-width: 600px) {
+
+            .success-card {
+                padding: 30px 20px;
+            }
+
+
+            .success-card h1 {
+                font-size: 30px;
+            }
+
+
+            .order-row {
+                gap: 15px;
+            }
+
+
+            .success-actions {
+                flex-direction: column;
+            }
+
+
+            .success-btn {
+                width: 100%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- Navbar -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🌱 EcoLife
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/products">
+                Products
+            </a>
+
+            <a href="/cart">
+                🛒 Cart
+            </a>
+
+            <a href="#">
+                About
+            </a>
+
+
+            {% if session.get("user_id") %}
+
+                <a href="#">
+                    👤 Hi, {{ session.get("user_name") }}
+                </a>
+
+                <a href="/logout">
+                    🚪 Logout
+                </a>
+
+            {% else %}
+
+                <a href="/login">
+                    🔐 Login
+                </a>
+
+                <a href="/register">
+                    Register
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- Success Section -->
+
+    <section class="success-section">
+
+
+        <div class="success-card">
+
+
+            <!-- Success Icon -->
+
+            <div class="success-icon">
+
+                ✓
+
+            </div>
+
+
+            <!-- Heading -->
+
+            <h1>
+                Order Placed Successfully!
+            </h1>
+
+
+            <p class="success-message">
+
+                Thank you for shopping with
+                <strong>EcoLife 🌱</strong>.
+
+                <br>
+
+                Your order has been received successfully.
+                We'll process it shortly.
+
+            </p>
+
+
+
+            <!-- Order Information -->
+
+            <div class="order-box">
+
+
+                <div class="order-row">
+
+                    <span class="order-label">
+                        🆔 Order ID
+                    </span>
+
+                    <span class="order-value">
+                        {{ order_id }}
+                    </span>
+
+                </div>
+
+
+                <div class="order-row">
+
+                    <span class="order-label">
+                        💰 Total Amount
+                    </span>
+
+                    <span class="order-value order-total">
+                        ₹{{ total }}
+                    </span>
+
+                </div>
+
+
+                <div class="order-row">
+
+                    <span class="order-label">
+                        💳 Payment Method
+                    </span>
+
+                    <span class="order-value">
+                        {{ payment }}
+                    </span>
+
+                </div>
+
+
+                <div class="order-row">
+
+                    <span class="order-label">
+                        📦 Order Status
+                    </span>
+
+                    <span class="order-value">
+                        Confirmed ✓
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- Note -->
+
+            <div class="success-note">
+
+                🌱 <strong>Thank you for choosing sustainable living!</strong>
+
+                <br>
+
+                Your purchase helps support a greener lifestyle.
+
+            </div>
+
+
+
+            <!-- Buttons -->
+
+            <div class="success-actions">
+
+
+                <a
+                    href="/products"
+                    class="success-btn shopping-btn"
+                >
+
+                    🛍️ Continue Shopping
+
+                </a>
+
+
+                <a
+                    href="/"
+                    class="success-btn home-btn"
+                >
+
+                    🏠 Back to Home
+
+                </a>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <p>
+
+            © 2026 EcoLife. Live Green. Live Better.
+
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>

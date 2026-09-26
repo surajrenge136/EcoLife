@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>{{ product.name }} - EcoLife</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <!-- Navbar -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🌱 EcoLife
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/products">
+                Products
+            </a>
+
+            <a href="/cart">
+                🛒 Cart
+            </a>
+
+            <a href="/my-orders">
+                📦 My Orders
+            </a>
+
+            <a href="#">
+                About
+            </a>
+
+
+            {% if session.get("user_id") %}
+
+                <a href="#">
+                    👤 Hi, {{ session.get("user_name") }}
+                </a>
+
+                <a href="/logout">
+                    🚪 Logout
+                </a>
+
+            {% else %}
+
+                <a href="/login">
+                    🔐 Login
+                </a>
+
+                <a href="/register">
+                    Register
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- Product Details -->
+
+    <section class="product-details">
+
+
+        <!-- Product Image -->
+
+        <div class="product-details-image">
+
+            <img
+                src="{{ url_for('static', filename='images/' + product.image) }}"
+                alt="{{ product.name }}"
+            >
+
+        </div>
+
+
+
+        <!-- Product Information -->
+
+        <div class="product-details-content">
+
+
+            <a href="/products"
+               class="back-btn">
+
+                ← Back to Products
+
+            </a>
+
+
+            <h1 style="margin-top: 20px;">
+
+                {{ product.name }}
+
+            </h1>
+
+
+            <!-- Rating -->
+
+            <div class="product-rating">
+
+                <span class="stars">
+                    ⭐⭐⭐⭐⭐
+                </span>
+
+                <strong>
+                    {{ product.rating }}
+                </strong>
+
+                <span class="review-count">
+                    ({{ product.reviews }} reviews)
+                </span>
+
+            </div>
+
+
+            <!-- Price -->
+
+            <div class="details-price">
+
+                ₹{{ product.price }}
+
+            </div>
+
+
+            <!-- Description -->
+
+            <p>
+
+                {{ product.description }}
+
+            </p>
+
+
+            <!-- Add To Cart -->
+
+            <a
+                href="/add-to-cart/{{ product_id }}"
+                class="add-cart-btn"
+                style="display: inline-block; text-decoration: none;"
+            >
+
+                🛒 Add to Cart
+
+            </a>
+
+
+            <!-- Buy Now -->
+
+            <a
+                href="/add-to-cart/{{ product_id }}"
+                class="product-btn"
+                style="margin-left: 10px;"
+            >
+
+                Buy Now →
+
+            </a>
+
+
+            <!-- Product Features -->
+
+            <div style="
+                margin-top: 35px;
+                padding: 20px;
+                background: white;
+                border-radius: 15px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            ">
+
+                <h3 style="
+                    margin-bottom: 15px;
+                    color: #183c2b;
+                ">
+
+                    Why You'll Love It 🌱
+
+                </h3>
+
+
+                <p style="
+                    margin-bottom: 8px;
+                    font-size: 15px;
+                ">
+
+                    ♻️ Eco-friendly and sustainable
+
+                </p>
+
+
+                <p style="
+                    margin-bottom: 8px;
+                    font-size: 15px;
+                ">
+
+                    🌿 Designed for everyday use
+
+                </p>
+
+
+                <p style="
+                    margin-bottom: 8px;
+                    font-size: 15px;
+                ">
+
+                    💚 Simple, useful and planet-friendly
+
+                </p>
+
+
+                <p style="
+                    margin-bottom: 0;
+                    font-size: 15px;
+                ">
+
+                    🚚 Easy ordering and delivery
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <p>
+
+            © 2026 EcoLife. Live Green. Live Better.
+
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>

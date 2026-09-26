@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EcoLife - Products</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .products-page {
+            padding: 50px 8%;
+            background: #f5f8f2;
+            min-height: 650px;
+        }
+
+        .products-heading {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .products-heading h1 {
+            color: #183c2b;
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .products-heading p {
+            color: #68756c;
+            font-size: 17px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+            transition: 0.25s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.10);
+        }
+
+        .product-image-box {
+            height: 230px;
+            background: #eef4ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 22px;
+        }
+
+        .product-info h2 {
+            color: #183c2b;
+            font-size: 21px;
+            margin-bottom: 8px;
+        }
+
+        .product-description {
+            color: #68756c;
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 45px;
+            margin-bottom: 12px;
+        }
+
+        .product-rating {
+            color: #d59620;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            color: #183c2b;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .stock {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .stock-available {
+            color: #278044;
+        }
+
+        .stock-low {
+            color: #c47a00;
+        }
+
+        .stock-out {
+            color: #c03939;
+        }
+
+        .product-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .view-btn,
+        .cart-btn {
+            flex: 1;
+            text-align: center;
+            padding: 11px 8px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .view-btn {
+            background: #eef4ed;
+            color: #183c2b;
+        }
+
+        .view-btn:hover {
+            background: #dfeade;
+        }
+
+        .cart-btn {
+            background: #2f7d4a;
+            color: white;
+        }
+
+        .cart-btn:hover {
+            background: #24643a;
+        }
+
+        .disabled-btn {
+            flex: 1;
+            text-align: center;
+            padding: 11px 8px;
+            border-radius: 8px;
+            background: #eeeeee;
+            color: #888888;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .no-products {
+            text-align: center;
+            padding: 60px;
+            color: #68756c;
+        }
+
+        @media (max-width: 1100px) {
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .products-page {
+                padding: 35px 5%;
+            }
+
+            .products-heading h1 {
+                font-size: 32px;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🌱 EcoLife
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/products">
+                Products
+            </a>
+
+            <a href="/cart">
+                🛒 Cart
+            </a>
+
+            <a href="/my-orders">
+                📦 My Orders
+            </a>
+
+            <a href="#">
+                About
+            </a>
+
+
+            {% if session.get("user_id") %}
+
+                {% if session.get("user_role") == "admin" %}
+
+                    <a href="/admin">
+                        ⚙️ Admin Panel
+                    </a>
+
+                {% endif %}
+
+
+                <a href="/logout">
+                    🚪 Logout
+                </a>
+
+            {% else %}
+
+                <a href="/login">
+                    🔐 Login
+                </a>
+
+                <a href="/register">
+                    Register
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- PRODUCTS -->
+
+    <section class="products-page">
+
+
+        <div class="products-heading">
+
+            <h1>
+                🌱 EcoLife Products
+            </h1>
+
+            <p>
+                Choose sustainable products for a greener lifestyle.
+            </p>
+
+        </div>
+
+
+
+        {% if products %}
+
+
+        <div class="products-grid">
+
+
+            {% for product_id, product in products.items() %}
+
+
+            <div class="product-card">
+
+
+                <div class="product-image-box">
+
+                    {% if product["image"] %}
+
+                        <img
+                            src="{{ url_for('static', filename='images/' + product['image']) }}"
+                            alt="{{ product['name'] }}">
+
+                    {% else %}
+
+                        <span style="font-size: 60px;">
+                            🌱
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+
+
+                <div class="product-info">
+
+
+                    <h2>
+                        {{ product["name"] }}
+                    </h2>
+
+
+                    <p class="product-description">
+
+                        {{ product["description"] }}
+
+                    </p>
+
+
+
+                    <div class="product-rating">
+
+                        ⭐ {{ product["rating"] }}
+
+                        <span style="color:#888;">
+                            ({{ product["reviews"] }} reviews)
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="product-price">
+
+                        ₹{{ product["price"] }}
+
+                    </div>
+
+
+
+                    {% if product["stock"] == 0 %}
+
+                        <div class="stock stock-out">
+                            ❌ Out of Stock
+                        </div>
+
+                    {% elif product["stock"] <= 5 %}
+
+                        <div class="stock stock-low">
+                            ⚠️ Only {{ product["stock"] }} left
+                        </div>
+
+                    {% else %}
+
+                        <div class="stock stock-available">
+                            ✅ {{ product["stock"] }} available
+                        </div>
+
+                    {% endif %}
+
+
+
+                    <div class="product-buttons">
+
+
+                        <a
+                            href="/product/{{ product_id }}"
+                            class="view-btn">
+
+                            View Details
+
+                        </a>
+
+
+
+                        {% if product["stock"] > 0 %}
+
+                            <a
+                                href="/add-to-cart/{{ product_id }}"
+                                class="cart-btn">
+
+                                🛒 Add
+
+                            </a>
+
+                        {% else %}
+
+                            <span class="disabled-btn">
+
+                                Out of Stock
+
+                            </span>
+
+                        {% endif %}
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            {% endfor %}
+
+
+        </div>
+
+
+        {% else %}
+
+
+        <div class="no-products">
+
+            <h2>
+                No products available
+            </h2>
+
+            <p>
+                Please check back later.
+            </p>
+
+        </div>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        <p>
+            © 2026 EcoLife. Live Green. Live Better.
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EcoLife - Shopping Cart</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <!-- Navbar -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🌱 EcoLife
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/products">
+                Products
+            </a>
+
+            <a href="/cart">
+                🛒 Cart
+            </a>
+
+            <a href="/my-orders">
+                📦 My Orders
+            </a>
+
+            <a href="#">
+                About
+            </a>
+
+
+            {% if session.get("user_id") %}
+
+                <a href="#">
+                    👤 Hi, {{ session.get("user_name") }}
+                </a>
+
+                <a href="/logout">
+                    🚪 Logout
+                </a>
+
+            {% else %}
+
+                <a href="/login">
+                    🔐 Login
+                </a>
+
+                <a href="/register">
+                    Register
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- Cart Section -->
+
+    <section class="cart-section">
+
+
+        <h1 style="
+            text-align: center;
+            font-size: 42px;
+            color: #183c2b;
+            margin-bottom: 40px;
+        ">
+
+            🛒 Your Shopping Cart
+
+        </h1>
+
+
+        {% if cart_items %}
+
+
+            <!-- Cart Items -->
+
+            <div>
+
+                {% for item in cart_items %}
+
+                <div class="cart-item">
+
+
+                    <!-- Product Image -->
+
+                    <img
+                        src="{{ url_for('static', filename='images/' + item.image) }}"
+                        alt="{{ item.name }}"
+                        class="cart-image"
+                    >
+
+
+                    <!-- Product Information -->
+
+                    <div class="cart-info"
+                         style="flex: 1;">
+
+                        <h3>
+                            {{ item.name }}
+                        </h3>
+
+
+                        <p>
+                            Price: ₹{{ item.price }}
+                        </p>
+
+
+                        <!-- Quantity -->
+
+                        <div class="quantity-control">
+
+                            <span style="
+                                font-weight: bold;
+                                color: #183c2b;
+                            ">
+
+                                Quantity:
+
+                            </span>
+
+
+                            <a
+                                href="/decrease/{{ item.id }}"
+                                class="quantity-btn"
+                            >
+
+                                −
+
+                            </a>
+
+
+                            <span class="quantity-number">
+
+                                {{ item.quantity }}
+
+                            </span>
+
+
+                            <a
+                                href="/increase/{{ item.id }}"
+                                class="quantity-btn"
+                            >
+
+                                +
+
+                            </a>
+
+                        </div>
+
+
+                        <!-- Item Total -->
+
+                        <strong>
+
+                            Item Total:
+                            ₹{{ item.item_total }}
+
+                        </strong>
+
+
+                        <!-- Remove -->
+
+                        <a
+                            href="/remove/{{ item.id }}"
+                            class="remove-btn"
+                        >
+
+                            ❌ Remove
+
+                        </a>
+
+                    </div>
+
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+
+
+            <!-- Cart Summary -->
+
+            <div class="cart-total">
+
+
+                <h2>
+                    Order Summary
+                </h2>
+
+
+                <p style="
+                    margin-bottom: 15px;
+                    color: #68756c;
+                ">
+
+                    Your total amount:
+
+                </p>
+
+
+                <h2 style="
+                    font-size: 30px;
+                    color: #347b4b;
+                    margin-bottom: 25px;
+                ">
+
+                    ₹{{ total }}
+
+                </h2>
+
+
+                <a
+                    href="/products"
+                    class="back-cart-btn"
+                    style="
+                        display: inline-block;
+                        margin-right: 10px;
+                    "
+                >
+
+                    ← Continue Shopping
+
+                </a>
+
+
+                <a
+                    href="/checkout"
+                    class="checkout-btn"
+                    style="
+                        display: inline-block;
+                        text-decoration: none;
+                    "
+                >
+
+                    💳 Proceed to Checkout →
+
+                </a>
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- Empty Cart -->
+
+            <div class="empty-cart">
+
+
+                <div class="empty-cart-icon">
+                    🛒
+                </div>
+
+
+                <h2>
+                    Your Cart is Empty
+                </h2>
+
+
+                <p>
+                    Looks like you haven't added
+                    anything to your cart yet.
+                </p>
+
+
+                <a
+                    href="/products"
+                    class="btn"
+                >
+
+                    🌱 Explore Products →
+
+                </a>
+
+
+            </div>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <p>
+
+            © 2026 EcoLife. Live Green. Live Better.
+
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>

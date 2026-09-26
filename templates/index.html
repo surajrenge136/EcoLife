@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EcoLife - Sustainable Living</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+
+<body>
+
+
+    <!-- Navbar -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            🌱 EcoLife
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/products">
+                Products
+            </a>
+
+            <a href="/cart">
+                🛒 Cart
+            </a>
+
+            <a href="/my-orders">
+                📦 My Orders
+            </a>
+
+            <a href="#">
+                About
+            </a>
+
+
+            {% if session.get("user_id") %}
+
+                {% if session.get("user_role") == "admin" %}
+
+                    <a href="/admin">
+                        ⚙️ Admin Panel
+                    </a>
+
+                {% endif %}
+
+
+                <a href="#">
+                    👤 Hi, {{ session.get("user_name") }}
+                </a>
+
+                <a href="/logout">
+                    🚪 Logout
+                </a>
+
+            {% else %}
+
+                <a href="/login">
+                    🔐 Login
+                </a>
+
+                <a href="/register">
+                    Register
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- Hero Section -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h1>
+                Live Green.<br>
+                Live <span>Better.</span>
+            </h1>
+
+
+            <p>
+                Discover eco-friendly products designed for
+                a cleaner, greener and more sustainable lifestyle.
+            </p>
+
+
+            <a href="/products" class="btn">
+                Explore Products →
+            </a>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- Features -->
+
+    <section class="features">
+
+
+        <div class="feature-card">
+
+            <div class="icon">
+                🌱
+            </div>
+
+            <h3>
+                Eco Friendly
+            </h3>
+
+            <p>
+                Products designed with sustainability
+                and nature in mind.
+            </p>
+
+        </div>
+
+
+
+        <div class="feature-card">
+
+            <div class="icon">
+                ♻️
+            </div>
+
+            <h3>
+                Sustainable
+            </h3>
+
+            <p>
+                Make better everyday choices for
+                our beautiful planet.
+            </p>
+
+        </div>
+
+
+
+        <div class="feature-card">
+
+            <div class="icon">
+                💚
+            </div>
+
+            <h3>
+                Made With Care
+            </h3>
+
+            <p>
+                Simple and useful products for
+                a greener lifestyle.
+            </p>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- Footer -->
+
+    <footer>
+
+        <p>
+            © 2026 EcoLife. Live Green. Live Better.
+        </p>
+
+    </footer>
+
+
+</body>
+
+</html>
