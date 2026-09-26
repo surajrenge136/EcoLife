@@ -89,7 +89,6 @@ def seed_default_products(connection):
 
     cursor = connection.cursor()
 
-    # Check whether products already exist
     cursor.execute("""
         SELECT COUNT(*) AS count
         FROM products
@@ -97,12 +96,9 @@ def seed_default_products(connection):
 
     result = cursor.fetchone()
 
-    if DATABASE_URL:
-        product_count = result["count"]
-    else:
-        product_count = result["count"]
+    product_count = result["count"]
 
-    # Do not duplicate products
+    # Don't duplicate products
     if product_count > 0:
         return
 
@@ -169,6 +165,63 @@ def seed_default_products(connection):
     connection.commit()
 
     print("Default EcoLife products added successfully! 🌱")
+
+
+# =========================================================
+# SEED ADMIN ACCOUNT
+# =========================================================
+
+def seed_admin(connection):
+
+    admin_email = os.environ.get("ADMIN_EMAIL")
+    admin_password = os.environ.get("ADMIN_PASSWORD")
+
+    # Don't create admin if environment variables are missing
+    if not admin_email or not admin_password:
+        print("ADMIN_EMAIL or ADMIN_PASSWORD not configured.")
+        return
+
+    cursor = connection.cursor()
+
+    # Check whether admin already exists
+    cursor.execute("""
+        SELECT id
+        FROM users
+        WHERE email = ?
+    """, (admin_email,))
+
+    existing_admin = cursor.fetchone()
+
+    if existing_admin:
+        print("Admin account already exists. ✅")
+        return
+
+    # Use Werkzeug's secure password hashing
+    from werkzeug.security import generate_password_hash
+
+    password_hash = generate_password_hash(
+        admin_password
+    )
+
+    cursor.execute("""
+        INSERT INTO users
+        (
+            name,
+            email,
+            password,
+            role
+        )
+        VALUES (?, ?, ?, ?)
+    """, (
+        "EcoLife Admin",
+        admin_email,
+        password_hash,
+        "admin"
+    ))
+
+    connection.commit()
+
+    print("Admin account created successfully! 🔐")
 
 
 # =========================================================
@@ -317,10 +370,16 @@ def initialize_database():
     connection.commit()
 
     # -----------------------------------------------------
-    # ADD DEFAULT PRODUCTS IF DATABASE IS EMPTY
+    # SEED DEFAULT PRODUCTS
     # -----------------------------------------------------
 
     seed_default_products(connection)
+
+    # -----------------------------------------------------
+    # SEED ADMIN ACCOUNT
+    # -----------------------------------------------------
+
+    seed_admin(connection)
 
     connection.close()
 
