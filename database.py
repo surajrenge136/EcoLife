@@ -82,6 +82,96 @@ def get_connection():
 
 
 # =========================================================
+# SEED DEFAULT PRODUCTS
+# =========================================================
+
+def seed_default_products(connection):
+
+    cursor = connection.cursor()
+
+    # Check whether products already exist
+    cursor.execute("""
+        SELECT COUNT(*) AS count
+        FROM products
+    """)
+
+    result = cursor.fetchone()
+
+    if DATABASE_URL:
+        product_count = result["count"]
+    else:
+        product_count = result["count"]
+
+    # Do not duplicate products
+    if product_count > 0:
+        return
+
+    products = [
+
+        (
+            "Eco Bottle",
+            299,
+            "Reusable eco-friendly bottle made for everyday hydration.",
+            "bottle.jpg",
+            50,
+            4.8,
+            124
+        ),
+
+        (
+            "Organic Tote Bag",
+            199,
+            "Durable organic cotton tote bag for shopping and everyday use.",
+            "bag.jpg",
+            50,
+            4.6,
+            89
+        ),
+
+        (
+            "Bamboo Essentials",
+            249,
+            "Eco-friendly bamboo essentials for a sustainable lifestyle.",
+            "bamboo.jpg",
+            50,
+            4.7,
+            106
+        ),
+
+        (
+            "Solar Light",
+            599,
+            "Energy-saving solar light powered by renewable energy.",
+            "solar.jpg",
+            50,
+            4.9,
+            157
+        )
+
+    ]
+
+    for product in products:
+
+        cursor.execute("""
+            INSERT INTO products
+            (
+                name,
+                price,
+                description,
+                image,
+                stock,
+                rating,
+                reviews
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, product)
+
+    connection.commit()
+
+    print("Default EcoLife products added successfully! 🌱")
+
+
+# =========================================================
 # INITIALIZE DATABASE
 # =========================================================
 
@@ -225,6 +315,13 @@ def initialize_database():
         """)
 
     connection.commit()
+
+    # -----------------------------------------------------
+    # ADD DEFAULT PRODUCTS IF DATABASE IS EMPTY
+    # -----------------------------------------------------
+
+    seed_default_products(connection)
+
     connection.close()
 
 
