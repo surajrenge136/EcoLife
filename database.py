@@ -62,7 +62,7 @@ class PostgresConnection:
 
 def get_connection():
 
-    # Production / Render PostgreSQL
+    # Render PostgreSQL
     if DATABASE_URL:
 
         import psycopg2
@@ -73,7 +73,7 @@ def get_connection():
 
         return PostgresConnection(connection)
 
-    # Local development SQLite
+    # Local SQLite
     connection = sqlite3.connect(DATABASE)
 
     connection.row_factory = sqlite3.Row
@@ -98,7 +98,7 @@ def seed_default_products(connection):
 
     product_count = result["count"]
 
-    # Don't duplicate products
+    # Don't create duplicate products
     if product_count > 0:
         return
 
@@ -173,15 +173,11 @@ def seed_default_products(connection):
 
 def seed_admin(connection):
 
-    admin_email = os.environ.get("ADMIN_EMAIL")
-    admin_password = os.environ.get("ADMIN_PASSWORD")
-
-    # Don't create admin if environment variables are missing
-    if not admin_email or not admin_password:
-        print("ADMIN_EMAIL or ADMIN_PASSWORD not configured.")
-        return
-
     cursor = connection.cursor()
+
+    # Temporary production admin credentials
+    admin_email = "admin@ecolife.com"
+    admin_password = "Admin@123"
 
     # Check whether admin already exists
     cursor.execute("""
@@ -193,10 +189,11 @@ def seed_admin(connection):
     existing_admin = cursor.fetchone()
 
     if existing_admin:
+
         print("Admin account already exists. ✅")
         return
 
-    # Use Werkzeug's secure password hashing
+    # Secure password hashing
     from werkzeug.security import generate_password_hash
 
     password_hash = generate_password_hash(
@@ -222,6 +219,7 @@ def seed_admin(connection):
     connection.commit()
 
     print("Admin account created successfully! 🔐")
+    print("Admin email: admin@ecolife.com")
 
 
 # =========================================================
@@ -370,13 +368,13 @@ def initialize_database():
     connection.commit()
 
     # -----------------------------------------------------
-    # SEED DEFAULT PRODUCTS
+    # SEED PRODUCTS
     # -----------------------------------------------------
 
     seed_default_products(connection)
 
     # -----------------------------------------------------
-    # SEED ADMIN ACCOUNT
+    # SEED ADMIN
     # -----------------------------------------------------
 
     seed_admin(connection)
@@ -393,6 +391,13 @@ if __name__ == "__main__":
     initialize_database()
 
     if DATABASE_URL:
-        print("EcoLife PostgreSQL database initialized successfully! 🌱")
+
+        print(
+            "EcoLife PostgreSQL database initialized successfully! 🌱"
+        )
+
     else:
-        print("EcoLife SQLite database initialized successfully! 🌱")
+
+        print(
+            "EcoLife SQLite database initialized successfully! 🌱"
+        )
