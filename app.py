@@ -3,7 +3,7 @@ import re
 import secrets
 import hashlib
 
-from flask import Flask, render_template, session, redirect, url_for, request
+from flask import Flask, render_template, session, redirect, url_for, request, Response
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from database import get_connection, initialize_database
@@ -96,8 +96,76 @@ def get_store_products():
 
 @app.route("/")
 def home():
-
     return render_template("index.html")
+
+
+# =========================================================
+# GOOGLE SITEMAP
+# =========================================================
+
+@app.route("/sitemap.xml")
+def sitemap():
+
+    store_products = get_store_products()
+
+    urls = [
+        url_for("home", _external=True),
+        url_for("products_page", _external=True),
+        url_for("cart", _external=True),
+        url_for("register", _external=True),
+        url_for("login", _external=True)
+    ]
+
+    # Add public product detail pages
+    for product_id in store_products:
+        urls.append(
+            url_for(
+                "product_details",
+                product_id=product_id,
+                _external=True
+            )
+        )
+
+    xml = ['<?xml version="1.0" encoding="UTF-8"?>']
+    xml.append(
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+    )
+
+    for page_url in urls:
+        xml.append("    <url>")
+        xml.append(f"        <loc>{page_url}</loc>")
+        xml.append("    </url>")
+
+    xml.append("</urlset>")
+
+    return Response(
+        "\n".join(xml),
+        mimetype="application/xml"
+    )
+
+
+# =========================================================
+# ROBOTS.TXT
+# =========================================================
+
+@app.route("/robots.txt")
+def robots_txt():
+
+    sitemap_url = url_for(
+        "sitemap",
+        _external=True
+    )
+
+    robots = f"""User-agent: *
+Allow: /
+
+Sitemap: {sitemap_url}
+"""
+
+    return Response(
+        robots,
+        mimetype="text/plain"
+    )
 
 
 # =========================================================
@@ -350,7 +418,26 @@ def place_order():
     city = request.form.get("city", "").strip()
     state = request.form.get("state", "").strip()
     pincode = request.form.get("pincode", "").strip()
-    payment = request.form.get("payment", "").strip()
+
+    # Get payment safely
+    payment = request.form.get("payment", "")
+
+    if payment is None:
+        payment = ""
+
+    payment = str(payment).strip()
+
+    # =====================================================
+    # DEBUG
+    # =====================================================
+
+    print("========================================")
+    print("PAYMENT RECEIVED FROM CHECKOUT:", repr(payment))
+    print("========================================")
+
+    # =====================================================
+    # REQUIRED FIELD VALIDATION
+    # =====================================================
 
     if not all([
         name,
@@ -362,25 +449,76 @@ def place_order():
         pincode,
         payment
     ]):
+
         return "Please fill all required fields.", 400
 
-    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+    # =====================================================
+    # EMAIL VALIDATION
+    # =====================================================
+
+    if not re.match(
+        r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+        email
+    ):
+
         return "Invalid email address.", 400
 
-    if not re.match(r"^[0-9]{10}$", phone):
+    # =====================================================
+    # PHONE VALIDATION
+    # =====================================================
+
+    if not re.match(
+        r"^[0-9]{10}$",
+        phone
+    ):
+
         return "Invalid phone number.", 400
 
-    if not re.match(r"^[0-9]{6}$", pincode):
+    # =====================================================
+    # PINCODE VALIDATION
+    # =====================================================
+
+    if not re.match(
+        r"^[0-9]{6}$",
+        pincode
+    ):
+
         return "Invalid pincode.", 400
 
-    allowed_payments = {
-        "COD",
-        "UPI",
-        "Card"
-    }
+    # =====================================================
+    # PAYMENT VALIDATION
+    # =====================================================
 
-    if payment not in allowed_payments:
-        return "Invalid payment method.", 400
+    # Normalize payment value
+    payment_lower = payment.lower()
+
+    if payment_lower in [
+        "cash on delivery",
+        "cod",
+        "cash-on-delivery",
+        "cash_on_delivery"
+    ]:
+
+        payment = "Cash on Delivery"
+
+    elif payment_lower == "upi":
+
+        payment = "UPI"
+
+    elif payment_lower == "card":
+
+        payment = "Card"
+
+    else:
+
+        return (
+            f"Invalid payment method received: {repr(payment)}",
+            400
+        )
+
+    # =====================================================
+    # GET PRODUCTS AND CART
+    # =====================================================
 
     store_products = get_store_products()
 
@@ -398,6 +536,10 @@ def place_order():
 
     try:
 
+        # =================================================
+        # CHECK STOCK AND CALCULATE TOTAL
+        # =================================================
+
         for product_id, quantity in cart.items():
 
             product = store_products.get(product_id)
@@ -414,6 +556,7 @@ def place_order():
                 continue
 
             if quantity > product["stock"]:
+
                 connection.rollback()
                 connection.close()
 
@@ -435,11 +578,25 @@ def place_order():
                 "db_id": product["db_id"]
             })
 
+        # =================================================
+        # EMPTY CART CHECK
+        # =================================================
+
         if not order_items:
+
             connection.close()
+
             return redirect(url_for("cart"))
 
+        # =================================================
+        # CREATE ORDER ID
+        # =================================================
+
         order_id = "ECO" + secrets.token_hex(4).upper()
+
+        # =================================================
+        # SAVE ORDER
+        # =================================================
 
         cursor.execute("""
             INSERT INTO orders
@@ -468,6 +625,10 @@ def place_order():
             payment,
             total
         ))
+
+        # =================================================
+        # SAVE ORDER ITEMS + UPDATE STOCK
+        # =================================================
 
         for item in order_items:
 
@@ -500,9 +661,15 @@ def place_order():
                 item["quantity"]
             ))
 
+        # =================================================
+        # COMMIT
+        # =================================================
+
         connection.commit()
 
-    except Exception:
+    except Exception as error:
+
+        print("ORDER ERROR:", error)
 
         connection.rollback()
         connection.close()
@@ -511,7 +678,15 @@ def place_order():
 
     connection.close()
 
+    # =====================================================
+    # CLEAR CART
+    # =====================================================
+
     session["cart"] = {}
+
+    # =====================================================
+    # ORDER SUCCESS
+    # =====================================================
 
     return render_template(
         "order_success.html",
@@ -537,30 +712,36 @@ def register():
     confirm_password = request.form.get("confirm_password", "")
 
     if not name or not email or not password:
+
         return render_template(
             "register.html",
             error="Please fill all required fields."
         )
 
-    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+    if not re.match(
+        r"^[^@\s]+@[^@\s]+\.[^@\s]+$",
+        email
+    ):
+
         return render_template(
             "register.html",
             error="Please enter a valid email address."
         )
 
     if len(password) < 8:
+
         return render_template(
             "register.html",
             error="Password must contain at least 8 characters."
         )
 
     if password != confirm_password:
+
         return render_template(
             "register.html",
             error="Passwords do not match."
         )
 
-    # Secure password hashing
     password_hash = generate_password_hash(password)
 
     connection = get_connection()
@@ -612,6 +793,7 @@ def login():
     password = request.form.get("password", "")
 
     if not email or not password:
+
         return render_template(
             "login.html",
             error="Please enter email and password."
@@ -642,16 +824,17 @@ def login():
     password_valid = False
     needs_password_upgrade = False
 
-    # New secure password
     try:
+
         password_valid = check_password_hash(
             stored_password,
             password
         )
+
     except Exception:
+
         password_valid = False
 
-    # Old SHA-256 password support
     if not password_valid:
 
         old_hash = hashlib.sha256(
@@ -662,6 +845,7 @@ def login():
             old_hash,
             stored_password
         ):
+
             password_valid = True
             needs_password_upgrade = True
 
@@ -674,10 +858,11 @@ def login():
             error="Invalid email or password."
         )
 
-    # Upgrade old SHA-256 password to secure hash
     if needs_password_upgrade:
 
-        new_password_hash = generate_password_hash(password)
+        new_password_hash = generate_password_hash(
+            password
+        )
 
         cursor.execute("""
             UPDATE users
@@ -908,10 +1093,23 @@ def admin_add_product():
     image = request.form.get("image", "").strip()
 
     try:
-        price = float(request.form.get("price", 0))
-        stock = int(request.form.get("stock", 0))
-        rating = float(request.form.get("rating", 0))
-        reviews = int(request.form.get("reviews", 0))
+
+        price = float(
+            request.form.get("price", 0)
+        )
+
+        stock = int(
+            request.form.get("stock", 0)
+        )
+
+        rating = float(
+            request.form.get("rating", 0)
+        )
+
+        reviews = int(
+            request.form.get("reviews", 0)
+        )
+
     except (TypeError, ValueError):
 
         return render_template(
@@ -920,6 +1118,7 @@ def admin_add_product():
         )
 
     if not name or price < 0 or stock < 0:
+
         return render_template(
             "admin_product_form.html",
             error="Please enter valid product information."
@@ -960,7 +1159,10 @@ def admin_add_product():
 # EDIT PRODUCT
 # =========================================================
 
-@app.route("/admin/products/edit/<int:product_id>", methods=["GET", "POST"])
+@app.route(
+    "/admin/products/edit/<int:product_id>",
+    methods=["GET", "POST"]
+)
 def admin_edit_product(product_id):
 
     if not admin_required():
@@ -994,10 +1196,23 @@ def admin_edit_product(product_id):
     image = request.form.get("image", "").strip()
 
     try:
-        price = float(request.form.get("price", 0))
-        stock = int(request.form.get("stock", 0))
-        rating = float(request.form.get("rating", 0))
-        reviews = int(request.form.get("reviews", 0))
+
+        price = float(
+            request.form.get("price", 0)
+        )
+
+        stock = int(
+            request.form.get("stock", 0)
+        )
+
+        rating = float(
+            request.form.get("rating", 0)
+        )
+
+        reviews = int(
+            request.form.get("reviews", 0)
+        )
+
     except (TypeError, ValueError):
 
         connection.close()
